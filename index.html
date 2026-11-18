@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dpay</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#F2F6FA;--surface:#fff;--ink:#10243A;--muted:#5A6B7D;--blue:#1B55A5;--gold:#E9A91B;--line:#D6DFE8;--on-blue:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1826;--surface:#132338;--ink:#E8EEF5;--muted:#9AABBD;--blue:#6FA3E8;--gold:#F2B83A;--line:#25384F;--on-blue:#0C1826}}
+:root[data-theme="dark"]{--bg:#0C1826;--surface:#132338;--ink:#E8EEF5;--muted:#9AABBD;--blue:#6FA3E8;--gold:#F2B83A;--line:#25384F;--on-blue:#0C1826}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.55}
+.wrap{max-width:560px;margin:0 auto;padding:0 20px 40px}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.02em;padding:18px 0}
+.logo b{color:var(--gold)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:20px}
+h2{font-size:20px;letter-spacing:-.01em;margin:0 0 18px}
+.row{margin-bottom:22px}
+.row>label,.row>span{display:flex;justify-content:space-between;font-weight:600;font-size:15px;margin-bottom:8px}
+output{color:var(--blue);font-weight:800}
+input[type=range]{width:100%;accent-color:var(--blue);height:28px}
+.terms{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.terms input{position:absolute;opacity:0}
+.terms label{text-align:center;padding:12px 0;border:1.5px solid var(--line);border-radius:10px;font-weight:700;cursor:pointer}
+.terms input:checked+label{background:var(--blue);border-color:var(--blue);color:var(--on-blue)}
+.terms input:focus-visible+label{outline:3px solid var(--gold);outline-offset:2px}
+.result{background:var(--blue);color:var(--on-blue);border-radius:12px;padding:18px}
+.result small{opacity:.85;display:block}
+.big{font-size:32px;font-weight:800;letter-spacing:-.02em}
+.sub{display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid rgba(128,128,128,.4);font-size:14px}
+.note{color:var(--muted);font-size:13px;margin:12px 0 0}
+.fee{border-left:4px solid var(--gold)}
+.amt{font-size:28px;font-weight:800;color:var(--blue)}
+dl{margin:14px 0 0;display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:15px}
+dt{color:var(--muted)}
+dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+form{display:grid;gap:16px}
+form label{font-weight:600;font-size:14px;display:grid;gap:6px}
+input[type=text],input[type=tel]{font:inherit;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.chk{display:flex!important;align-items:flex-start;gap:10px!important}
+.chk input{margin-top:4px;accent-color:var(--blue)}
+input:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button{font:inherit;font-weight:800;border:0;border-radius:10px;padding:14px 18px;background:var(--gold);color:#10243A;cursor:pointer}
+#msg{margin:0;font-weight:600;color:var(--blue);min-height:1.4em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">D<b>pay</b></div>
+
+  <div class="card">
+    <h2>Зээл тооцоолох</h2>
+    <div class="row">
+      <label for="amt">Зээлийн дүн <output id="amtO"></output></label>
+      <input id="amt" type="range" min="100000" max="3000000" step="100000" value="1000000">
+    </div>
+    <div class="row">
+      <span>Зээлийн хугацаа</span>
+      <div class="terms" role="radiogroup" aria-label="Зээлийн хугацаа">
+        <div><input type="radio" name="t" id="t1" value="1"><label for="t1">1 сар</label></div>
+        <div><input type="radio" name="t" id="t3" value="3" checked><label for="t3">3 сар</label></div>
+        <div><input type="radio" name="t" id="t6" value="6"><label for="t6">6 сар</label></div>
+      </div>
+    </div>
+    <div class="result" aria-live="polite">
+      <small>Сар бүрийн төлбөр</small>
+      <div class="big" id="pay">—</div>
+      <div class="sub"><span>Нийт төлөх дүн</span><b id="total">—</b></div>
+    </div>
+    <p class="note">Сарын хүү 1.6% гэж бодсон жишээ тооцоо.</p>
+  </div>
+
+  <div class="card fee">
+    <h2>Зээлийн мэдээллийн сангийн хураамж</h2>
+    <div class="amt">3 000 ₮</div>
+    <dl>
+      <dt>Банк</dt><dd>Хаан банк</dd>
+      <dt>Дансны дугаар</dt><dd>970005005057184246</dd>
+      <dt>Хүлээн авагч</dt><dd>Ариунтамир</dd>
+      <dt>Гүйлгээний утга</dt><dd>Утасны дугаар + ЗМС</dd>
+    </dl>
+    <p class="note">Хүсэлт өгөхөөс өмнө хураамжаа төлнө үү.</p>
+  </div>
+
+  <div class="card">
+    <h2>Хүсэлт өгөх</h2>
+    <form id="f">
+      <label>Овог нэр<input type="text" id="name" required autocomplete="name"></label>
+      <label>Утасны дугаар<input type="tel" id="tel" required inputmode="numeric" pattern="[0-9]{8}" placeholder="99112233" autocomplete="tel"></label>
+      <label class="chk"><input type="checkbox" required>Зээлийн мэдээллийн сангийн хураамжийг төлсөн</label>
+      <button type="submit">Хүсэлт илгээх</button>
+      <p id="msg" role="status"></p>
+    </form>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(n).toLocaleString('en-US').replace(/,/g,' ')+' ₮';
+function calc(){
+  const P=+$('amt').value,n=+document.querySelector('input[name=t]:checked').value,r=0.016;
+  const m=P*r/(1-Math.pow(1+r,-n));
+  $('amtO').textContent=fmt(P);
+  $('pay').textContent=fmt(m);
+  $('total').textContent=fmt(m*n);
+}
+$('amt').addEventListener('input',calc);
+document.querySelectorAll('input[name=t]').forEach(i=>i.addEventListener('change',calc));
+calc();
+$('f').addEventListener('submit',e=>{
+  e.preventDefault();
+  $('msg').textContent='Хүсэлт хүлээн авлаа, '+$('name').value+'.';
+  e.target.reset();
+});
+</script>
+</body>
+</html>
